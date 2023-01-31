@@ -4,6 +4,7 @@
     :value="modelValue"
     @change="handleChange"
     @input="handleInput"
+    @blur="handleBlur"
     required
   />
 </template>
@@ -30,6 +31,12 @@ function handleInput(e: Event) {
   // 做验证
   validateProp?.(
     FormItemTriggerType.INPUT,
+    (e.target as HTMLInputElement).value
+  );
+}
+function handleBlur(e: Event) {
+  validateProp?.(
+    FormItemTriggerType.CHANGE,
     (e.target as HTMLInputElement).value
   );
 }

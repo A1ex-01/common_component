@@ -1,33 +1,84 @@
 <template>
-  <AxFormItem placeholder="用户名" :rules="rulePsw">
-    <AxInput v-model="formData.username" />
-  </AxFormItem>
-  <AxFormItem placeholder="密码" :rules="rulePsw">
-    <AxInput v-model="formData.password" />
-  </AxFormItem>
-  <AxFormItem placeholder="验证码" :rules="rulePsw">
-    <AxInput v-model="formData.code" />
-  </AxFormItem>
+  <AxForm :model="formData" :rules="rules" ref="form">
+    <AxFormItem placeholder="用户名" prop="username">
+      <AxInput v-model="formData.username" />
+    </AxFormItem>
+    <AxFormItem placeholder="密码" prop="password">
+      <AxInput v-model="formData.password" />
+    </AxFormItem>
+    <AxFormItem placeholder="验证码" prop="code">
+      <AxInput v-model="formData.code" />
+    </AxFormItem>
+  </AxForm>
+  <button @click="submit">提交</button>
+  <button @click="resetFormData">重置</button>
 </template>
 <script setup lang="ts">
-import { reactive } from "vue";
-import { AxFormItem, AxInput } from "../components/AxForm";
+import { onMounted, reactive, ref } from "vue";
+import { AxFormItem, AxInput, AxForm } from "../components/AxForm";
 import {
   FormItem,
+  FormItemRule,
   FormItemTriggerType,
 } from "../components/AxForm/types/formItem";
-const formData = reactive({
+interface IData {
+  username: string;
+  password: string;
+  code: string;
+}
+const formData: IData = reactive({
   username: "",
   password: "",
   code: "",
 });
-const rulePsw: FormItem["rules"] = [
-  {
-    max: 16,
-    min: 8,
-    message: `密码最少8位,最长16位~`,
-    trigger: FormItemTriggerType.CHANGE,
-  },
-];
+function resetFormData() {
+  Object.keys(formData).forEach((field: string) => {
+    (formData as any)[field] = "";
+  });
+}
+const rules: { [x: string]: FormItemRule[] } = {
+  username: [
+    {
+      required: true,
+      message: "用户名为必填项",
+    },
+    {
+      max: 10,
+      min: 4,
+      message: `用户名最少4位,最长10位~`,
+      trigger: FormItemTriggerType.CHANGE,
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: "密码为必填项",
+    },
+    {
+      max: 16,
+      min: 8,
+      message: `密码最少6位,最长16位~`,
+      trigger: FormItemTriggerType.CHANGE,
+    },
+  ],
+  code: [
+    {
+      required: true,
+      message: "验证码为必填项",
+    },
+    {
+      max: 4,
+      min: 4,
+      message: `验证码必须是四位~`,
+      trigger: FormItemTriggerType.INPUT,
+    },
+  ],
+};
+
+const form = ref<InstanceType<typeof AxForm>>();
+async function submit() {
+  const { code, msg } = await form.value!.validateRules();
+  console.log(msg);
+}
 </script>
 <style scoped></style>

@@ -10,26 +10,48 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { provide, ref } from "vue";
-import { FormItem, FormItemTriggerType } from "../types/formItem";
+import { inject, provide, ref } from "vue";
+import { FormItem, FormItemRule, FormItemTriggerType } from "../types/formItem";
+import AsyncValidator from "async-validator";
 interface IProps {
   placeholder: string;
-  rules: FormItem["rules"];
+  prop: string;
+  rules?: FormItem["rules"];
 }
 const props = defineProps<IProps>();
 const errorMsg = ref("");
+const rules: { [x: string]: FormItemRule[] } = inject("rules")!;
 function validateProp(trigger: FormItemTriggerType, value: string) {
-  props.rules.forEach((rule) => {
-    rule.trigger === trigger && run(rule);
+  const currProp = props.prop;
+  // const ruleFiltered = rules[currProp]?.filter((rule) => {
+  //   return rule.trigger === trigger;
+  // });
+  // if (!ruleFiltered.length) return;
+  // const ruleFiltered = props.rules![props.prop]
+  const validator = new AsyncValidator({
+    [props.prop]: rules[props.prop].filter((rule) => rule.trigger === trigger),
   });
-  function run(rule: any) {
-    if (!value) return (errorMsg.value = "");
-    if (value.length < rule.min! || value.length > rule.max!) {
-      errorMsg.value = rule.message as string;
-    } else {
+  validator
+    .validate({
+      [currProp]: value,
+    })
+    .then((res) => {
       errorMsg.value = "";
-    }
-  }
+    })
+    .catch(({ errors }) => {
+      errorMsg.value = errors[0].message;
+    });
+  // props.rules?.forEach((rule) => {
+  //   rule.trigger === trigger && run(rule);
+  // });
+  // function run(rule: any) {
+  //   if (!value) return (errorMsg.value = "");
+  //   if (value.length < rule.min! || value.length > rule.max!) {
+  //     errorMsg.value = rule.message as string;
+  //   } else {
+  //     errorMsg.value = "";
+  //   }
+  // }
 }
 // 验证状态
 const validateState = ref("1");

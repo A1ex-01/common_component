@@ -13,6 +13,6 @@ interface FormItem {
   prop: string;
   label: string;
   rules: FormItemRule[];
-  showMessage: boolean;
+  showMessage?: boolean;
 }
 export { type FormItem, type FormItemRule, FormItemTriggerType };
