@@ -2,8 +2,8 @@
 // model rules
 import type { FormItemRule } from "./formItem";
 interface FormProps {
-  model: {};
+  model: object;
   rules: { [x: string]: FormItemRule[] };
-  showMessage: boolean;
+  showMessage?: boolean;
 }
 export { type FormProps };
