@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "async-validator": "^4.2.5",
+    "element-plus": "^2.2.33",
     "sass": "^1.57.1",
     "vue": "^3.2.45"
   },
