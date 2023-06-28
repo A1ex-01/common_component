@@ -10,8 +10,8 @@
       <AxInput v-model="formData.code" />
     </AxFormItem>
   </AxForm>
-  <button @click="submit">提交</button>
-  <button @click="resetFormData">重置</button>
+  <AxButton type="primary" @click="submit">提交</AxButton>
+  <AxButton type="dashed" @click="resetFormData">重置</AxButton>
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
@@ -21,6 +21,7 @@ import {
   FormItemRule,
   FormItemTriggerType,
 } from "../components/AxForm/types/formItem";
+import AxButton from "../components/AxButton";
 interface IData {
   username: string;
   password: string;
@@ -41,6 +42,7 @@ const rules: { [x: string]: FormItemRule[] } = {
     {
       required: true,
       message: "用户名为必填项",
+      trigger: FormItemTriggerType.CHANGE,
     },
     {
       max: 10,
@@ -57,7 +59,7 @@ const rules: { [x: string]: FormItemRule[] } = {
     {
       max: 16,
       min: 8,
-      message: `密码最少6位,最长16位~`,
+      message: `密码最少8位,最长16位~`,
       trigger: FormItemTriggerType.CHANGE,
     },
   ],

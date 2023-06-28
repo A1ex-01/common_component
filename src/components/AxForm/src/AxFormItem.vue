@@ -29,7 +29,9 @@ function validateProp(trigger: FormItemTriggerType, value: string) {
   // if (!ruleFiltered.length) return;
   // const ruleFiltered = props.rules![props.prop]
   const validator = new AsyncValidator({
-    [props.prop]: rules[props.prop].filter((rule) => rule.trigger === trigger),
+    [props.prop]: rules[props.prop].filter(
+      (rule) => rule.trigger === trigger || rule.required
+    ),
   });
   validator
     .validate({
@@ -57,6 +59,10 @@ function validateProp(trigger: FormItemTriggerType, value: string) {
 const validateState = ref("1");
 provide("validateProp", validateProp);
 provide("validateRules", props.rules);
+const sendInstances: any = inject("instances");
+sendInstances((obj: any) =>
+  validateProp(FormItemTriggerType.CHANGE, obj[props.prop])
+);
 </script>
 <style lang="scss" scoped>
 .form-item {
